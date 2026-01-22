@@ -52,3 +52,8 @@ class VotexityPlugin extends Plugin implements PluginEvents {
 }
 
 export default new VotexityPlugin();
+
+// Export types and classes for external use
+export * from "./api";
+export * from "./config";
+export * from "./emitter";

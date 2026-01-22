@@ -1,6 +1,6 @@
 {
   "name": "votexity",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "TerraBloom",
   "description": "Lightweight voting plugin for SerenityJS",
   "main": "dist/index.js",
