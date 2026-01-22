@@ -1,12 +1,50 @@
-# Introduction
-The SerenityJS sample plugin provides a basic configuration for plugin usage in the software. To get started, either clone this repo or create a new repository using this template. A firm understanding of TypeScript and JavaScript will be very beneficial for plugin development.
+# Votexity
+
+Lightweight voting plugin for SerenityJS. Integrates with [minecraftpocket-servers.com](https://minecraftpocket-servers.com).
 
 ## Usage
-The plugin system in SerenityJS is pretty simple to use and to develop on. Make sure you place your plugin within the `plugins` directory within your SerenityJS server. Once the server starts up, it will recognize the plugin and process it accordingly. Plugins that are written in TypeScript will be built upon usage. Visit our [documentation](https://serenityjs.net/) to get started!
+Just place the `votexity` .plugin file in your `plugins` directory.
 
-## Building
-This plugin sample uses TypeScript to build your plugin. Anytime you make a change to your plugin, you will need to transpile your code into pure JavaScript. To do this, run the command `npm run build` in the source directory of your plugin. You should notice a new `dist` directory was created. The will be the entry point to your plugin. A default watch script is also provided to automatically build your plugin when changes are made. To use this, run `npm run watch` in the source directory of your plugin.
+## Types Installation
 
-### Coding Examples
-  - [**Custom Blocks**](https://www.serenityjs.net/documents/Creating_a_Custom_Block.html)
-  - [**Custom Commands**](https://www.serenityjs.net/documents/Registering_a_Command.html)
+```bash
+npm install votexity
+```
+
+## Configuration
+
+Config file: `./plugins/configs/votexity/config.yml`
+
+```yaml
+apiKey: "your-api-key"
+autoclaim: true
+voteAnnouncement: "§l§7{§aVOTE§7}§r §a{username} §7has voted! Use §e/vote §7to claim rewards."
+messageNotVoted: "§l§7{§cVOTE§7}§r §7You haven't voted today! Vote at §ehttps://minecraftpocket-servers.com"
+messageVoted: "§l§7{§aVOTE§7}§r §7You have already claimed your vote today!"
+disableClaimMessage: false
+```
+
+| Option | Description |
+|--------|-------------|
+| `apiKey` | Your minecraftpocket-servers.com API key |
+| `autoclaim` | Auto-check votes every 30 seconds |
+| `voteAnnouncement` | Broadcast message when someone votes (`{username}` placeholder) |
+| `disableClaimMessage` | Disable built-in messages to handle them yourself |
+
+## Listening for Votes
+
+```typescript
+import type { VotexityPlugin } from "votexity";
+
+const plugin = this.pipeline.plugins.get("votexity") as VotexityPlugin;
+
+if (plugin) {
+  plugin.getVoteManager().on("vote", (username) => {
+    // Handle vote rewards here
+  });
+}
+```
+
+## License
+
+MIT
