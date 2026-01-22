@@ -57,3 +57,4 @@ export default new VotexityPlugin();
 export * from "./api";
 export * from "./config";
 export * from "./emitter";
+export { VotexityPlugin }
