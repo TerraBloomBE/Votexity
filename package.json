@@ -1,8 +1,8 @@
 {
-  "name": "sample-plugin",
+  "name": "votexity",
   "version": "1.0.0",
-  "author": "SerenityJS",
-  "description": "Sample plugin provides a basic configuration for plugin usage in the SerenityJS software.",
+  "author": "TerraBloom",
+  "description": "Lightweight voting plugin for SerenityJS",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "license": "MIT",
@@ -21,5 +21,8 @@
   "devDependencies": {
     "tsup": "^8.3.5",
     "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "yaml": "^2.8.2"
   }
 }

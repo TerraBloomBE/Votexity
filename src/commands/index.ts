@@ -1,0 +1,1 @@
+export * as VoteCommand from "./vote-command";

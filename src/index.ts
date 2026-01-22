@@ -1,43 +1,54 @@
 import { Plugin, PluginEvents, PluginPriority } from "@serenityjs/plugins";
+import { ConfigManager, DEFAULT_VOTING_CONFIG, VotingConfig } from "./config";
+import { VotingManager } from "./api";
+import { WorldEvent } from "@serenityjs/core";
+import { VoteCommand } from "./commands";
 
-// This is a sample plugin that has a class-based implementation.
-// In Serenity, there are two types of plugins: class-based and function-based.
-// Class-based plugins are more flexible and can be used to create more complex plugins.
-// Function-based plugins are simpler and are used for creating simple plugins.
-
-class SamplePlugin extends Plugin implements PluginEvents {
-  // Declare the priorty of the plugin.
-
-  // Depending on the priority, plugins will be initialized in a specific order.
-  // Plugins with a higher priority will be initialized first.
-  public readonly priority: PluginPriority = PluginPriority.Low;
+class VotexityPlugin extends Plugin implements PluginEvents {
+  public readonly priority: PluginPriority = PluginPriority.High;
+  private vconfig!: ConfigManager<VotingConfig>;
+  private votingManager!: VotingManager;
 
   public constructor() {
-    // Super assigns the name and version of the plugin.
-    // There is an additional parameter that can be passed to the super constructor,
-    // but since this is a class-based plugin, it is not required, as the properties & methods can be directly created in the class.
-    super("sample-plugin", "1.0.0");
+    super("votexity", "1.0.0");
   }
 
-  // This method is called right after the plugin is loaded from the file system.
-  // Once this method is called, `this.serenity` & `this.pipeline` will be in scope.
-  // This method should be used when registering any custom features; such as commands, traits, generators, providers, blocks, etc.
   public onInitialize(): void {
-    this.logger.info("Sample plugin initialized!");
+    this.logger.info("Votexity plugin initialized!");
+    this.vconfig = new ConfigManager<VotingConfig>(
+      "./plugins/configs/votexity",
+      "config",
+      DEFAULT_VOTING_CONFIG,
+    );
+    this.votingManager = VotingManager.getInstance();
+    this.votingManager.initialize(this.serenity, this.logger);
+    this.votingManager.setConfig(this.vconfig.get());
+    VoteCommand.register(this.serenity);
   }
 
-  // This method is called once all plugins have been initialized and all worlds have been loaded.
-  // This method should be used to start any services and tasks that the plugin requires.
+  public getVoteManager(): VotingManager {
+    return this.votingManager;
+  }
+
   public onStartUp(): void {
-    this.logger.info("Sample plugin started up!");
+    this.logger.info("Votexity plugin started up!");
+
+    this.serenity.after(WorldEvent.PlayerInitialized, ({ player }) => {
+      this.votingManager.startAutoclaim(player);
+    });
+
+    this.serenity.after(WorldEvent.PlayerLeave, ({ player }) => {
+      this.votingManager.stopAutoclaim(player.xuid);
+    });
+    
+    this.serenity.on(WorldEvent.WorldInitialize, ({ world }) => {
+      VoteCommand.register(world);
+    })
   }
 
-  // This method is called when the server is shutting down, but is called before the worlds and raknet server are shut down.
-  // This method should be used to stop any services and tasks that the plugin started up.
-  // This also should be used to clean up any resources that the plugin created via the `onInitialize` method.
   public onShutDown(): void {
-    this.logger.info("Sample plugin shut down!");
+    this.logger.info("Votexity plugin shut down!");
   }
 }
 
-export default new SamplePlugin();
+export default new VotexityPlugin();
